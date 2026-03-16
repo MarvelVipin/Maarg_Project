@@ -55,5 +55,5 @@ module.exports.createCaptain = async ({
         }
     });
 
-    return captain;  // ⭐ VERY IMPORTANT
+    return captain;  
 }

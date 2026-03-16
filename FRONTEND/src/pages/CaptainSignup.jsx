@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CaptainDataContext } from '../context/CaptainContext'
-import {useNavigate} from 'react-router-dom'
+import { useCaptain } from '../context/CaptainContext'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+
 
 
 const CaptainSignup = () => {
@@ -18,7 +19,8 @@ const CaptainSignup = () => {
   const [vehicleType, setVehicleType] = useState('')
 
 
-  const { captain, setCaptain } = React.useContext(CaptainDataContext)
+  const { captain, setCaptain } = useCaptain()
+  const navigate = useNavigate()
 
 
   const submitHandler = async (e) => {
@@ -33,13 +35,13 @@ const CaptainSignup = () => {
       vehicle: {
         color: vehicleColor,
         plate: vehiclePlate,
-        capacity: vehicleCapacity,
+        capacity: Number(vehicleCapacity),
         vehicleType: vehicleType
       }
     }
 
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`, captainData)
-    if(response.status === 201) {
+    if (response.status === 201) {
       const data = response.data
       setCaptain(data.captain)
       localStorage.setItem('token', data.token)
@@ -143,7 +145,8 @@ const CaptainSignup = () => {
                 placeholder='Vehicle Capacity'
                 className='bg-[#eeeeee] w-1/2  rounded px-4 py-2 border text-lg placeholder:text-base' />
 
-              <select required
+              <select
+                required
                 value={vehicleType}
                 onChange={(e) => {
                   setVehicleType(e.target.value)
@@ -152,10 +155,10 @@ const CaptainSignup = () => {
               >
                 <option value="">Select Vehicle Type</option>
                 <option value="car">Car</option>
-                <option value="van">Motor Bike</option>
-                <option value="bus">Auto</option>
+                <option value="bike">Motor Bike</option>
+                <option value="auto">Auto</option>
               </select>
-                
+
             </div>
 
 
