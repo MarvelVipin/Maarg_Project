@@ -12,33 +12,47 @@ const CaptainLogin = () => {
   const navigate = useNavigate()
   
 
-  const submitHandler =  async (e)=>{
-    e.preventDefault();
-    const captain ={
+const submitHandler = async (e) => {
+  e.preventDefault();
+
+  try {
+    const captain = {
       email: email,
       password: password,
     }
 
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/login`, captain)
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/captain/login`,
+      captain
+    )
+
+    console.log("LOGIN RESPONSE:", response.data)
 
     if (response.status === 200) {
       const data = response.data
+
       setCaptain(data.captain)
+
+      
       localStorage.setItem('token', data.token)
+
+      console.log("TOKEN SAVED:", localStorage.getItem('token'))
+
       navigate('/captain-home')
     }
 
-
-    setEmail('')
-    setPassword('')
+  } catch (error) {
+    console.log("LOGIN ERROR:", error.response?.data)
   }
+
+  setEmail('')
+  setPassword('')
+}
   return (
     <div className='p-7 h-screen flex flex-col justify-between'>
       <div>
         <img className='w-16 mb-10 color' src="https://cdn-icons-png.flaticon.com/128/346/346945.png" />
-        <form onSubmit={(e)=>{
-          submitHandler(e)
-        }}>
+        <form onSubmit={submitHandler}>
           <h3 className='text-lg font-medium mb-2'>What's your email ?</h3>
           <input
             value={email}
