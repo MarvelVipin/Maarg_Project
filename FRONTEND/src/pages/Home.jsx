@@ -3,6 +3,8 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel.jsx'
+import VehiclePanel from '../components/VehiclePanel.jsx'
+import ConfirmRide from '../components/ConfirmRide.jsx'
 
 const Home = () => {
 
@@ -10,9 +12,11 @@ const Home = () => {
   const [destination, setDestination] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
   const vehiclePanelRef = useRef(null)
+  const confirmRidePanelRef = useRef(null)
   const panelRef = useRef(null)
   const panelCloseRef = useRef(null)
   const [vehiclePanel, setVehiclePanel] = useState(false)
+  const [confirmRidePanel, setConfirmRidePanel] = useState(false)
 
   const submitHandler = (e) => {
     e.preventDefault()
@@ -52,10 +56,22 @@ const Home = () => {
     }
   }, [vehiclePanel])
 
+  useGSAP(function () {
+    if (confirmRidePanel) {
+      gsap.to(confirmRidePanelRef.current, {
+        transform:'translateY(0)',
+      })
+    } else {
+      gsap.to(confirmRidePanelRef.current, {
+       transform:'translateY(100%)',
+      })
+    }
+  }, [confirmRidePanel])
+
   return (
     <div className='h-screen relative overflow-hidden'>
       <img className='w-16 absolute left-4 top-1' src="https://cdn-icons-png.flaticon.com/128/346/346945.png" alt="" />
-      <div onClick={()=>{setVehiclePanel(false)}} className='h-screen w-screen'>
+      <div className='h-screen w-screen'>
         <img className='h-full w-full' src="https://ubernewsroomapi.10upcdn.com/wp-content/uploads/2018/10/Spaines-es_Shield-Web_RiderEmergencyAssistance_20181015.gif" alt="" />
       </div>
       <div className='bg-white flex flex-col justify-end h-screen absolute top-0 w-full '>
@@ -92,46 +108,12 @@ const Home = () => {
           <LocationSearchPanel  setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel}/>
         </div>
       </div>
-      <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-8'>
-        <i className="ri-arrow-down-wide-line"></i>
-        <h3 className='text-2xl font-semibold mb-5'>Choose Vehicle</h3>
+      <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+      </div>
 
-        <div className='w-full mb-2 flex border-2 active:border-black rounded-xl items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://cn-geo1.uber.com/image-proc/crop/resizecrop/udam/format=auto/width=552/height=368/srcb64=aHR0cHM6Ly90Yi1zdGF0aWMudWJlci5jb20vcHJvZC91ZGFtLWFzc2V0cy85OWJmYWM5Mi00ODAzLTQxNGMtODRmYi1kMWZmNjU0NWM5YzAucG5n" alt="" />
-          <div className=' w-1/2 ml-5'>
-            <h4 className='font-medium text-base'>Maarg Car <span><i className="ri-user-fill"></i>5</span></h4>
-            <h5 className='font-medium text-sm'>2 mins away</h5>
-            <p className='font-normal text-xs text-gray-600'>Affordable, Compact rides</p>
-          </div>
-          <h2 className='text-xl font-semibold'>₹193</h2>
-        </div>
-        <div className='w-full mb-2 flex border-2  rounded-xl active:border-black items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://png.pngtree.com/png-vector/20220326/ourmid/pngtree-motorcycle-cartoon-vector-colorful-illustrations-png-image_4514944.png" alt="" />
-          <div className=' w-1/2 ml-5'>
-            <h4 className='font-medium text-base'>BikeRide <span><i className="ri-user-fill"></i>1</span></h4>
-            <h5 className='font-medium text-sm'>2 mins away</h5>
-            <p className='font-normal text-xs text-gray-600'>Affordable, Compact rides</p>
-          </div>
-          <h2 className='text-xl font-semibold'>₹85</h2>
-        </div>
-        <div className='w-full mb-2 flex border-2 rounded-xl active:border-black  items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://png.pngtree.com/png-clipart/20230414/original/pngtree-blue-rickshaw-png-image_9056195.png" alt="" />
-          <div className=' w-1/2 ml-5'>
-            <h4 className='font-medium text-base'>TriCar <span><i className="ri-user-fill"></i>1</span></h4>
-            <h5 className='font-medium text-sm'>2 mins away</h5>
-            <p className='font-normal text-xs text-gray-600'>Affordable, Compact rides</p>
-          </div>
-          <h2 className='text-xl font-semibold'>₹85</h2>
-        </div>
-        <div className='w-full mb-2 flex border-2  rounded-xl active:border-black items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://png.pngtree.com/png-vector/20220326/ourmid/pngtree-motorcycle-cartoon-vector-colorful-illustrations-png-image_4514944.png" alt="" />
-          <div className=' w-1/2 ml-5'>
-            <h4 className='font-medium text-base'>Maarg Car<span><i className="ri-user-fill"></i>1</span></h4>
-            <h5 className='font-medium text-sm'>2 mins away</h5>
-            <p className='font-normal text-xs text-gray-600'>Affordable, Compact rides</p>
-          </div>
-          <h2 className='text-xl font-semibold'>₹85</h2>
-        </div>
+      <div ref={confirmRidePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+        <ConfirmRide/>
       </div>
     </div>
   )
