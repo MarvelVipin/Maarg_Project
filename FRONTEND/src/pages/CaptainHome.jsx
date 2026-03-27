@@ -1,10 +1,46 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import CaptainDetails from '../components/CaptainDetails'
+import RidePopUp from '../components/RidePopUp'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 
-const CaptainHome = () => {
+const CaptainHome = (props) => {
+
+  const [ridePopUpPanel, setRidePopUpPanel] = useState(true)
+  const [confirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
+  const ridePopUpPanelRef = useRef(null)
+  const confirmRidePopUpPanelRef = useRef(null)
+
+  useGSAP(function () {
+    if (ridePopUpPanel) {
+      gsap.to(ridePopUpPanelRef.current, {
+        transform: 'translateY(0)',
+      })
+    } else {
+      gsap.to(ridePopUpPanelRef.current, {
+        transform: 'translateY(100%)',
+      })
+    }
+  }, [ridePopUpPanel])
+
+  useGSAP(function () {
+    if (confirmRidePopUpPanel) {
+      gsap.to(confirmRidePopUpPanelRef.current, {
+        transform: 'translateY(0)',
+      })
+    } else {
+      gsap.to(confirmRidePopUpPanelRef.current, {
+        transform: 'translateY(100%)',
+      })
+    }
+  }, [confirmRidePopUpPanel])
+
+
   return (
     <div className='h-screen '>
-      <div className='fixed p-3 top-0 flex items-center justify-between w-screen'> 
+      <div className='fixed p-3 top-0 flex items-center justify-between w-screen'>
         <img className='w-16' src="https://cdn-icons-png.flaticon.com/128/346/346945.png" alt="" />
         <Link to='/captain-home' className='h-10 w-10  bg-purple-700 flex items-center justify-center rounded-full '>
           <i className=" text-lg font-medium text-white ri-logout-circle-line"></i>
@@ -14,33 +50,13 @@ const CaptainHome = () => {
         <img className='h-full w-full object-cover' src="https://ubernewsroomapi.10upcdn.com/wp-content/uploads/2018/10/Spaines-es_Shield-Web_RiderEmergencyAssistance_20181015.gif" alt="" />
       </div>
       <div className='h-2/5 p-6'>
-        <div className='flex item-center justify-between'>
-          <div className='flex item-center justify-start gap-3'>
-            <img className=' h-14 object-cover w-14 rounded-full' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThCnkA8Z1as6TlNW-IQY0bOxPicwmej0Il0g&s" alt="" />
-            <h4 className='text-lg font-medium'>Vivek pandey</h4>
-          </div>
-          <div>
-            <h4 className='text-xl font-semibold'>₹265.36</h4>
-            <p className='text-sm  text-gray-600'>Earned</p>
-          </div>
-        </div>
-        <div className='flex p-4  bg-gray-200 rounded-xl justify-center gap-5 item-start'>
-          <div className='text-center'>
-            <i className=" text-2xl font-thin  mb-2 ri-time-line"></i>
-            <h5 className='text-lg font-medium '>10.3</h5>
-            <p className='text-sm text-gray-400'>Hours Online</p>
-          </div>
-          <div className='text-center'>
-            <i className=" text-2xl font-thin mb-2  ri-dashboard-3-line"></i>
-            <h5 className='text-lg font-medium '>10.3</h5>
-            <p className='text-sm text-gray-400'>Hours Online</p>
-          </div>
-          <div className='text-center'>
-            <i className=" text-2xl font-thin  mb-2 ri-booklet-line"></i>
-            <h5 className='text-lg font-medium '>10.3</h5>
-            <p className='text-sm text-gray-400'>Hours Online</p>
-          </div>
-        </div>
+        <CaptainDetails />
+      </div>
+      <div ref={ridePopUpPanelRef} className='w-full fixed z-10 translate-y-full bottom-0  bg-white px-3 py-10 pt-12'>
+        <RidePopUp setRidePopUpPanel={setRidePopUpPanel} setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
+      </div>
+      <div ref={confirmRidePopUpPanelRef} className='w-full fixed z-10 translate-y-full bottom-0  bg-white px-3 py-10 pt-12'>
+        <ConfirmRidePopUp setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} setRidePopUpPanel={setRidePopUpPanel} />
       </div>
     </div>
   )
