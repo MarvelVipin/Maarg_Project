@@ -1,18 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 
-const ConfirmRidePopUp = (props) => {
-  const [otp, setOtp] = useState('')
-  const submitHandler = ()=>{
-    e.preventDefault()
-  }
+const FinishRide = (props) => {
   return (
-    <div>
+<div>
        <div >
-      <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={()=>{props.setRidePopUpPanel(false) }}><i className="text-3xl text-gray-300 ri-arrow-down-wide-line pt-14"></i></h5>
+      <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={()=>{props.setFinishRidePanel(false) }}><i className="text-3xl text-gray-300 ri-arrow-down-wide-line pt-14"></i></h5>
 
-      <h3 className='text-2xl font-semibold mb-5 mt-4'>Confirm this ride to start</h3>
-      <div className='flex items-center justify-between p-3 bg-blue-400 rounded-lg'> 
+      <h3 className='text-2xl font-semibold mb-5 mt-4'>Finish this ride</h3>
+      <div className='flex items-center justify-between p-3 border-2 border-blue-400 rounded-lg'> 
         <div className='flex items-center gap-3 '>
             <img className=' h-14 object-cover w-14 rounded-full' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThCnkA8Z1as6TlNW-IQY0bOxPicwmej0Il0g&s" alt="" />
             <h2 className='text-lg font-medium'>Vivek Pandey</h2>
@@ -45,21 +41,7 @@ const ConfirmRidePopUp = (props) => {
           </div>
         </div>
         <div className='mt-6 w-full'>
-          <form onSubmit={
-            (e)=>{
-              submitHandler(e)
-            }
-          } >
-            <input value={otp} onChange={(e)=>{
-              setOtp(e.target.value)
-            }} type="text" placeholder='Enter OTP' className='bg-[#eee] px-6 py-4 font-mono text-base rounded-lg  w-full mt-4' />
-            <Link to='/captain-riding' className='w-full flex justify-center mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg'>Confirm</Link>
-
-        <button onClick={()=>{
-          props.setConfirmRidePopUpPanel(false)
-          props.setRidePopUpPanel(false)
-        }} className='w-full mt-2 bg-gray-700 text-black font-semibold p-2 rounded-lg text-white'>Cancel</button>
-          </form>
+            <Link to='/captain-home' className='w-full flex justify-center mt-5 bg-yellow-500 text-white font-semibold p-2 rounded-lg'>Complete Ride</Link>
         </div>
       </div>
     </div>
@@ -67,4 +49,4 @@ const ConfirmRidePopUp = (props) => {
   )
 }
 
-export default ConfirmRidePopUp
+export default FinishRide
