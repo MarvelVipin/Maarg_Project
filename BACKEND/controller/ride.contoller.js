@@ -1,4 +1,4 @@
-const rideService = require("../service/ride.service");
+const rideService = require("../services/ride.service");
 const { validationResult } = require('express-validator');
 
 module.exports.createRide = async (req, res, next) => {

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import 'remixicon/fonts/remixicon.css'
+import axios from 'axios'
 import LocationSearchPanel from '../components/LocationSearchPanel.jsx'
 import VehiclePanel from '../components/VehiclePanel.jsx'
 import ConfirmRide from '../components/ConfirmRide.jsx'
@@ -13,6 +14,8 @@ const Home = () => {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
+  const [suggestions, setSuggestions] = useState([])
+  const [activeField, setActiveField] = useState('')
   const vehiclePanelRef = useRef(null)
   const confirmRidePanelRef = useRef(null)
   const vehicleFoundRef = useRef(null)
@@ -28,6 +31,33 @@ const Home = () => {
   const submitHandler = (e) => {
     e.preventDefault()
   }
+
+ const fetchSuggestions = async (query) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    // 🚨 ADD THIS CHECK
+    if (!token) {
+      console.log("No token found, redirecting to login");
+      return;
+    }
+
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+      {
+        params: { input: query },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    setSuggestions(response.data);
+  } catch (error) {
+    console.error('Error fetching suggestions:', error.response?.data || error.message);
+    setSuggestions([]);
+  }
+}
 
   useGSAP(function () {
     if (panelOpen) {
@@ -117,26 +147,45 @@ const Home = () => {
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
             <input
               onClick={() => {
+                setActiveField('pickup')
                 setPanelOpen(true)
               }}
               value={pickup}
               onChange={(e) => {
                 setPickup(e.target.value)
+                if (e.target.value.length >= 3) {
+                  fetchSuggestions(e.target.value)
+                } else {
+                  setSuggestions([])
+                }
               }}
               className='bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-4' type="text" placeholder='Enter pickup location' />
             <input
               onClick={() => {
+                setActiveField('destination')
                 setPanelOpen(true)
               }}
               value={destination}
               onChange={(e) => {
                 setDestination(e.target.value)
+                if (e.target.value.length >= 3) {
+                  fetchSuggestions(e.target.value)
+                } else {
+                  setSuggestions([])
+                }
               }}
               className='bg-[#eee] px-12 py-2 text-base rounded-lg  w-full mt-4' type="text" placeholder='Enter destination' />
           </form>
         </div>
         <div ref={panelRef} className='bg-white h-0'>
-          <LocationSearchPanel setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel} />
+          <LocationSearchPanel 
+            suggestions={suggestions} 
+            activeField={activeField} 
+            setPickup={setPickup} 
+            setDestination={setDestination} 
+            setPanelOpen={setPanelOpen} 
+            setSuggestions={setSuggestions} 
+          />
         </div>
       </div>
       <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>

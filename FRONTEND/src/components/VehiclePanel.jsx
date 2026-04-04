@@ -16,7 +16,7 @@ const VehiclePanel = (props) => {
           <h2 className='text-xl font-semibold'>₹193</h2>
         </div>
         <div onClick={()=>{props.setConfirmRidePanel(true)}} className='w-full mb-2 flex border-2  rounded-xl active:border-black items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://png.pngtree.com/png-vector/20220326/ourmid/pngtree-motorcycle-cartoon-vector-colorful-illustrations-png-image_4514944.png" alt="" />
+          <img className='h-12' src="https://rajaneditz.com/wp-content/uploads/2022/05/Yellow-bullet-bike-png.webp" alt="" />
           <div className=' w-1/2 ml-5'>
             <h4 className='font-medium text-base'>BikeRide <span><i className="ri-user-fill"></i>1</span></h4>
             <h5 className='font-medium text-sm'>2 mins away</h5>
@@ -34,9 +34,9 @@ const VehiclePanel = (props) => {
           <h2 className='text-xl font-semibold'>₹85</h2>
         </div>
         <div onClick={()=>{props.setConfirmRidePanel(true)}} className='w-full mb-2 flex border-2  rounded-xl active:border-black items-center justify-between p-3 bg-gray-100'>
-          <img className='h-12' src="https://png.pngtree.com/png-vector/20220326/ourmid/pngtree-motorcycle-cartoon-vector-colorful-illustrations-png-image_4514944.png" alt="" />
+          <img className='h-12' src="https://rajaneditz.com/wp-content/uploads/2022/05/Yellow-bullet-bike-png.webp" alt="" />
           <div className=' w-1/2 ml-5'>
-            <h4 className='font-medium text-base'>Maarg Car<span><i className="ri-user-fill"></i>1</span></h4>
+            <h4 className='font-medium text-base'>BikeRide<span><i className="ri-user-fill"></i>1</span></h4>
             <h5 className='font-medium text-sm'>2 mins away</h5>
             <p className='font-normal text-xs text-gray-600'>Affordable, Compact rides</p>
           </div>
