@@ -8,6 +8,7 @@ import VehiclePanel from '../components/VehiclePanel.jsx'
 import ConfirmRide from '../components/ConfirmRide.jsx'
 import LookingForDriver from '../components/LookingForDriver.jsx'
 import WaitingForDriver from '../components/WaitingForDriver.jsx'
+import MapComponent from "../components/MapComponent";
 
 const Home = () => {
 
@@ -32,32 +33,32 @@ const Home = () => {
     e.preventDefault()
   }
 
- const fetchSuggestions = async (query) => {
-  try {
-    const token = localStorage.getItem('token');
+  const fetchSuggestions = async (query) => {
+    try {
+      const token = localStorage.getItem('token');
 
-    // 🚨 ADD THIS CHECK
-    if (!token) {
-      console.log("No token found, redirecting to login");
-      return;
-    }
-
-    const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-      {
-        params: { input: query },
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      // 🚨 ADD THIS CHECK
+      if (!token) {
+        console.log("No token found, redirecting to login");
+        return;
       }
-    );
 
-    setSuggestions(response.data);
-  } catch (error) {
-    console.error('Error fetching suggestions:', error.response?.data || error.message);
-    setSuggestions([]);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+        {
+          params: { input: query },
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error.response?.data || error.message);
+      setSuggestions([]);
+    }
   }
-}
 
   useGSAP(function () {
     if (panelOpen) {
@@ -131,18 +132,25 @@ const Home = () => {
 
   return (
     <div className='h-screen relative overflow-hidden'>
-      <img className='w-16 absolute left-4 top-1' src="https://cdn-icons-png.flaticon.com/128/346/346945.png" alt="" />
-      <div className='h-screen w-screen'>
+      <img className='w-16 font-bold absolute right-4 top-1 z-20'  src="https://cdn-icons-png.flaticon.com/128/346/346945.png" alt="" />
+      {/* <div className='h-screen w-screen'>
         <img className='h-full w-full object-cover' src="https://ubernewsroomapi.10upcdn.com/wp-content/uploads/2018/10/Spaines-es_Shield-Web_RiderEmergencyAssistance_20181015.gif" alt="" />
+      </div> */}
+
+
+      <div className="absolute top-0 left-0 w-full h-full z-0">
+        <MapComponent />
       </div>
-      <div className='bg-white flex flex-col justify-end h-screen absolute top-0 w-full '>
-        <div className='h-[30%] p-6 bg-white relative'>
+
+
+      <div className='flex flex-col justify-end h-screen absolute top-0 w-full z-10 pointer-events-none border-2 border-black rounded-xl'>
+        <div className='h-[30%] p-6 bg-white relative pointer-events-auto'>
           <h5 ref={panelCloseRef} onClick={() => {
             setPanelOpen(false)
           }} className='absolute opacity-0 right-6 top-6 text-2xl cursor-pointer'>
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
-          <h4 className='text-2xl font-semibold'>Find a Trip</h4>
+          <h4 className='text-2xl font-semibold bg-red-600'>Find a Trip</h4>
           <form action="" onSubmit={(e) => { submitHandler(e) }}>
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
             <input
@@ -177,22 +185,22 @@ const Home = () => {
               className='bg-[#eee] px-12 py-2 text-base rounded-lg  w-full mt-4' type="text" placeholder='Enter destination' />
           </form>
         </div>
-        <div ref={panelRef} className='bg-white h-0'>
-          <LocationSearchPanel 
-            suggestions={suggestions} 
-            activeField={activeField} 
-            setPickup={setPickup} 
-            setDestination={setDestination} 
-            setPanelOpen={setPanelOpen} 
-            setSuggestions={setSuggestions} 
+        <div ref={panelRef} className='bg-white h-0 pointer-events-auto'>
+          <LocationSearchPanel
+            suggestions={suggestions}
+            activeField={activeField}
+            setPickup={setPickup}
+            setDestination={setDestination}
+            setPanelOpen={setPanelOpen}
+            setSuggestions={setSuggestions}
           />
         </div>
       </div>
-      <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+      <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
       </div>
 
-      <div ref={confirmRidePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+      <div ref={confirmRidePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <ConfirmRide
           setConfirmRidePanel={setConfirmRidePanel}
           setVehicleFound={setVehicleFound}
@@ -200,11 +208,11 @@ const Home = () => {
         />
       </div>
 
-      <div ref={vehicleFoundRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+      <div ref={vehicleFoundRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <LookingForDriver setVehicleFound={setVehicleFound} />
       </div>
 
-      <div ref={waitingForDriverRef} className='w-full fixed z-10 bottom-0  bg-white px-3 py-10 pt-12'>
+      <div ref={waitingForDriverRef} className='w-full fixed z-10 bottom-0  bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <WaitingForDriver waitingForDriver={waitingForDriver} />
       </div>
     </div>
