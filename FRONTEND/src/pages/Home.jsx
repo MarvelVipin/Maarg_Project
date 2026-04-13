@@ -143,14 +143,14 @@ const Home = () => {
       </div>
 
 
-      <div className='flex flex-col justify-end h-screen absolute top-0 w-full z-10 pointer-events-none border-2 border-black rounded-xl'>
+      <div className='flex flex-col justify-end h-screen absolute top-0 w-full z-10 pointer-events-none'>
         <div className='h-[30%] p-6 bg-white relative pointer-events-auto'>
           <h5 ref={panelCloseRef} onClick={() => {
             setPanelOpen(false)
           }} className='absolute opacity-0 right-6 top-6 text-2xl cursor-pointer'>
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
-          <h4 className='text-2xl font-semibold bg-red-600'>Find a Trip</h4>
+          <h4 className='text-2xl font-semibold '>Find a Trip</h4>
           <form action="" onSubmit={(e) => { submitHandler(e) }}>
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
             <input
