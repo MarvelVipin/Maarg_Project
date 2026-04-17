@@ -9,6 +9,8 @@ import ConfirmRide from '../components/ConfirmRide.jsx'
 import LookingForDriver from '../components/LookingForDriver.jsx'
 import WaitingForDriver from '../components/WaitingForDriver.jsx'
 import MapComponent from "../components/MapComponent";
+import { useEffect } from "react";
+import { getLocationSuggestions } from "../services/locationService.js"
 
 const Home = () => {
 
@@ -16,7 +18,7 @@ const Home = () => {
   const [destination, setDestination] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
   const [suggestions, setSuggestions] = useState([])
-  const [activeField, setActiveField] = useState('')
+  const [activeField, setActiveField] = useState(null)
   const vehiclePanelRef = useRef(null)
   const confirmRidePanelRef = useRef(null)
   const vehicleFoundRef = useRef(null)
@@ -33,32 +35,18 @@ const Home = () => {
     e.preventDefault()
   }
 
-  const fetchSuggestions = async (query) => {
-    try {
-      const token = localStorage.getItem('token');
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      let query = activeField === "pickup" ? pickup : destination;
 
-      // 🚨 ADD THIS CHECK
-      if (!token) {
-        console.log("No token found, redirecting to login");
-        return;
+      if (query && query.length > 2) {
+        const results = await getLocationSuggestions(query);
+        setSuggestions(results);
       }
+    }, 400);
 
-      const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-        {
-          params: { input: query },
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      setSuggestions(response.data);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error.response?.data || error.message);
-      setSuggestions([]);
-    }
-  }
+    return () => clearTimeout(timer);
+  }, [pickup, destination, activeField]);
 
   useGSAP(function () {
     if (panelOpen) {
@@ -132,10 +120,15 @@ const Home = () => {
 
   return (
     <div className='h-screen relative overflow-hidden'>
-      <img className='w-16 font-bold absolute right-4 top-1 z-20'  src="https://cdn-icons-png.flaticon.com/128/346/346945.png" alt="" />
-      {/* <div className='h-screen w-screen'>
-        <img className='h-full w-full object-cover' src="https://ubernewsroomapi.10upcdn.com/wp-content/uploads/2018/10/Spaines-es_Shield-Web_RiderEmergencyAssistance_20181015.gif" alt="" />
-      </div> */}
+
+
+      <div className="absolute top-0 left-0 w-full flex items-center px-4 py-4 z-30">
+        <img
+          className='w-12'
+          src="https://cdn-icons-png.flaticon.com/128/346/346945.png"
+          alt=""
+        />
+      </div>
 
 
       <div className="absolute top-0 left-0 w-full h-full z-0">
@@ -143,64 +136,81 @@ const Home = () => {
       </div>
 
 
-      <div className='flex flex-col justify-end h-screen absolute top-0 w-full z-10 pointer-events-none'>
-        <div className='h-[30%] p-6 bg-white relative pointer-events-auto'>
-          <h5 ref={panelCloseRef} onClick={() => {
-            setPanelOpen(false)
-          }} className='absolute opacity-0 right-6 top-6 text-2xl cursor-pointer'>
+      <div className='flex flex-col justify-end h-screen absolute top-0 w-full z-10 pointer-events-none pt-20'>
+
+        <div className='h-[30%] p-6 bg-white relative pointer-events-auto rounded-t-2xl'>
+
+          <h5
+            ref={panelCloseRef}
+            onClick={() => setPanelOpen(false)}
+            className='absolute opacity-0 right-6 top-6 text-2xl cursor-pointer'
+          >
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
-          <h4 className='text-2xl font-semibold '>Find a Trip</h4>
-          <form action="" onSubmit={(e) => { submitHandler(e) }}>
+
+          <h4 className='text-2xl font-semibold'>Find a Trip</h4>
+
+          <form onSubmit={submitHandler}>
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
-            <input
-              onClick={() => {
-                setActiveField('pickup')
-                setPanelOpen(true)
-              }}
-              value={pickup}
-              onChange={(e) => {
-                setPickup(e.target.value)
-                if (e.target.value.length >= 3) {
-                  fetchSuggestions(e.target.value)
-                } else {
-                  setSuggestions([])
-                }
-              }}
-              className='bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-4' type="text" placeholder='Enter pickup location' />
-            <input
-              onClick={() => {
-                setActiveField('destination')
-                setPanelOpen(true)
-              }}
-              value={destination}
-              onChange={(e) => {
-                setDestination(e.target.value)
-                if (e.target.value.length >= 3) {
-                  fetchSuggestions(e.target.value)
-                } else {
-                  setSuggestions([])
-                }
-              }}
-              className='bg-[#eee] px-12 py-2 text-base rounded-lg  w-full mt-4' type="text" placeholder='Enter destination' />
+
+
+
+            <div className="relative mt-5 space-y-4">
+
+  <div className="flex items-center bg-gray-100 rounded-xl px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-black transition">
+    <i className="ri-map-pin-fill text-gray-600 text-lg mr-3"></i>
+    <input
+      value={pickup}
+      onChange={(e) => setPickup(e.target.value)}
+      onFocus={() => {
+        setActiveField("pickup");
+        setPanelOpen(true);
+      }}
+      placeholder="Enter pickup location"
+      className="bg-transparent outline-none w-full text-sm"
+    />
+  </div>
+
+  
+  <div className="flex items-center bg-gray-100 rounded-xl px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-black transition">
+    <i className="ri-flag-2-fill text-gray-600 text-lg mr-3"></i>
+    <input
+      value={destination}
+      onChange={(e) => setDestination(e.target.value)}
+      onFocus={() => {
+        setActiveField("destination");
+        setPanelOpen(true);
+      }}
+      placeholder="Enter destination"
+      className="bg-transparent outline-none w-full text-sm"
+    />
+  </div>
+
+</div>
+
+
+
           </form>
         </div>
+
         <div ref={panelRef} className='bg-white h-0 pointer-events-auto'>
           <LocationSearchPanel
             suggestions={suggestions}
             activeField={activeField}
             setPickup={setPickup}
             setDestination={setDestination}
-            setPanelOpen={setPanelOpen}
             setSuggestions={setSuggestions}
+            setPanelOpen={setPanelOpen}
           />
         </div>
       </div>
-      <div ref={vehiclePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
+
+
+      <div ref={vehiclePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
       </div>
 
-      <div ref={confirmRidePanelRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
+      <div ref={confirmRidePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <ConfirmRide
           setConfirmRidePanel={setConfirmRidePanel}
           setVehicleFound={setVehicleFound}
@@ -208,13 +218,14 @@ const Home = () => {
         />
       </div>
 
-      <div ref={vehicleFoundRef} className='w-full fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
+      <div ref={vehicleFoundRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <LookingForDriver setVehicleFound={setVehicleFound} />
       </div>
 
-      <div ref={waitingForDriverRef} className='w-full fixed z-10 bottom-0  bg-white px-3 py-10 pt-12 pointer-events-auto'>
+      <div ref={waitingForDriverRef} className='w-full fixed z-20 bottom-0 bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <WaitingForDriver waitingForDriver={waitingForDriver} />
       </div>
+
     </div>
   )
 }

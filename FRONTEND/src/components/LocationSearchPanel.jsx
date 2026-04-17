@@ -1,29 +1,35 @@
-import React from 'react'
+import { useState, useEffect } from "react";
+import { getLocationSuggestions } from "../services/locationService";
 
-const LocationSearchPanel = (props) => {
-    console.log(props)
-
+const LocationSearchPanel = ({
+    suggestions,
+    activeField,
+    setPickup,
+    setDestination,
+    setSuggestions,
+}) => {
     return (
-    <div>
-        {
-            props.suggestions.map(function (elem, idx){
-                return <div key={idx} onClick={()=>{
-                    if (props.activeField === 'pickup') {
-                        props.setPickup(elem.description)
-                    } else if (props.activeField === 'destination') {
-                        props.setDestination(elem.description)
-                    }
-                    props.setPanelOpen(false)
-                    props.setSuggestions([])
-                }} className='flex gap-4 border-2 p-3 border-gray-10 active:border-black rounded-xl items-center my-2 justify-start'>
-            <h2 className='h-8 w-12 flex items-center justify-center'><i className="ri-map-pin-2-fill "></i></h2>
-            <h4 className='font-medium'>{elem.description}</h4>
+        <div className="bg-white">
+            {suggestions.map((place, index) => (
+                <div
+                    key={index}
+                    className="p-3 border-b cursor-pointer hover:bg-gray-200"
+                    onClick={(props) => {
+                        if (activeField === "pickup") {
+                            setPickup(place.display_name);
+                        } else {
+                            setDestination(place.display_name);
+                        }
+
+                        setSuggestions([]);
+                        props.setPanelOpen(false);
+                    }}
+                >
+                    {place.display_name}
+                </div>
+            ))}
         </div>
-            })
-        }
+    );
+};
 
-    </div>
-  )
-}
-
-export default LocationSearchPanel
+export default LocationSearchPanel;
