@@ -29,6 +29,7 @@ const Home = () => {
   const [confirmRidePanel, setConfirmRidePanel] = useState(false)
   const [vehicleFound, setVehicleFound] = useState(false)
   const [waitingForDriver, setWaitingForDriver] = useState(false)
+  const [fare, setFare] = useState({})
 
 
   const submitHandler = (e) => {
@@ -118,17 +119,53 @@ const Home = () => {
     }
   }, [waitingForDriver])
 
+  async function findTrip() {
+  setVehiclePanel(true);
+  setPanelOpen(false);
+
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/rides/get-fare`, 
+      {
+        params: { pickup, destination },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    console.log(response.data);
+    setFare(response.data);
+
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+
+async function createRide(vehicleType) {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/rides/create`,
+      { pickup, destination, vehicleType },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    console.log(response.data); 
+
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+}
+
+
   return (
     <div className='h-screen relative overflow-hidden'>
 
-
-      <div className="absolute top-0 left-0 w-full flex items-center px-4 py-4 z-30">
-        <img
-          className='w-12'
-          src="https://cdn-icons-png.flaticon.com/128/346/346945.png"
-          alt=""
-        />
-      </div>
 
 
       <div className="absolute top-0 left-0 w-full h-full z-0">
@@ -151,7 +188,7 @@ const Home = () => {
             <i className="ri-arrow-down-wide-line"></i>
           </h5>
 
-          <h4 className='text-2xl font-semibold'>Find a Trip</h4>
+          <h4 className='text-2xl font-semibold text-gray-900'>Plan Your Journey</h4>
 
           <form onSubmit={submitHandler}>
             <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full"></div>
@@ -186,7 +223,8 @@ const Home = () => {
               </div>
             </div>
           </form>
-          <button className='bg-purple-800  text-white w-full py-3 px-2 rounded-lg mt-3'>
+          <button className='bg-purple-800  text-white w-full py-3 px-2 rounded-lg mt-3'
+            onClick={findTrip}>
             Find Trip
           </button>
         </div>
@@ -205,7 +243,7 @@ const Home = () => {
 
 
       <div ref={vehiclePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
-        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+        <VehiclePanel createRide={createRide} fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
       </div>
 
       <div ref={confirmRidePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
@@ -221,7 +259,7 @@ const Home = () => {
       </div>
 
       <div ref={waitingForDriverRef} className='w-full fixed z-20 bottom-0 bg-white px-3 py-10 pt-12 pointer-events-auto'>
-        <WaitingForDriver waitingForDriver={waitingForDriver} setWaitingForDriver={setWaitingForDriver}/>
+        <WaitingForDriver waitingForDriver={waitingForDriver} setWaitingForDriver={setWaitingForDriver} />
       </div>
 
     </div>

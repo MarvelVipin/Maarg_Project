@@ -1,69 +1,76 @@
 const axios = require('axios');
 
-module.exports.getAddressCoordinate = async (address) => {
-    const apiKey = process.env.GOOGLE_MAPS_API;
-
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-
-    try {
-        const response = await axios.get(url);
-
-        if (response.data.status === 'OK') {
-            const location = response.data.results[0].geometry.location;
-
-            return {
-                lat: location.lat,
-                lng: location.lng
-            };
-        } else {
-            throw new Error("Unable to fetch coordinates");
+async function getCoordinates(address) {
+    const res = await axios.get(
+        "https://nominatim.openstreetmap.org/search",
+        {
+            params: {
+                q: address,
+                format: "json"
+            },
+            headers: {
+                "User-Agent": "my-app"
+            }
         }
+    );
 
-    } catch (err) {
-        console.error(err.message);
-        throw err;
+    if (!res.data.length) {
+        throw new Error("Location not found");
     }
-};
+
+    return {
+        lat: res.data[0].lat,
+        lon: res.data[0].lon
+    };
+}
+
+
 
 module.exports.getDistanceTime = async (origin, destination) => {
-    if (!origin || !destination) {
-        throw new Error("Origin and destination are required");
-    }
-    const apiKey = process.env.GOOGLE_MAPS_API;
-
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
     try {
-        const response = await axios.get(url);
-        if (response.data.status === 'OK') {
-            if (response.data.rows[0].elements[0].status === 'ZERO_RESULTS') {
-                throw new Error("No route found");
+        const originCoords = await getCoordinates(origin);
+        const destCoords = await getCoordinates(destination);
+
+        const routeRes = await axios.get(
+            `https://router.project-osrm.org/route/v1/driving/${originCoords.lon},${originCoords.lat};${destCoords.lon},${destCoords.lat}`,
+            {
+                params: { overview: "false" }
             }
-            return response.data.rows[0].elements[0];
-        } else {
-            throw new Error("Unable to fetch distance and time");
+        );
+
+        if (!routeRes.data.routes.length) {
+            throw new Error("No route found");
         }
+
+        const route = routeRes.data.routes[0];
+
+        return {
+            distance: { value: route.distance },   
+            duration: { value: route.duration }    
+        };
+
     } catch (err) {
-        console.error(err.message);
-        throw err;
+        console.error("OSM ERROR:", err.message);
+        throw new Error("Unable to fetch distance and time");
     }
 };
 
-module.exports.getSuggestions = async (input) => {
-    if (!input) {
-        throw new Error("Query is required");
-    }   
-    const apiKey = process.env.GOOGLE_MAPS_API;
 
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
-    try {
-        const response = await axios.get(url);
-        if (response.data.status === 'OK') {
-            return response.data.predictions;
-        } else {
-            throw new Error("Unable to fetch suggestions");
+
+module.exports.getSuggestions = async (input) => {
+    const res = await axios.get(
+        "https://nominatim.openstreetmap.org/search",
+        {
+            params: {
+                q: input,
+                format: "json",
+                limit: 5
+            },
+            headers: {
+                "User-Agent": "my-app"
+            }
         }
-    } catch (err) {
-        console.error(err.message);
-        throw err;
-    }
+    );
+
+    return res.data;
 };
