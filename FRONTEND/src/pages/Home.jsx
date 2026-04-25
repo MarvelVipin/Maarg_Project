@@ -30,6 +30,7 @@ const Home = () => {
   const [vehicleFound, setVehicleFound] = useState(false)
   const [waitingForDriver, setWaitingForDriver] = useState(false)
   const [fare, setFare] = useState({})
+  const [vehicleType, setVehicleType] = useState(null)
 
 
   const submitHandler = (e) => {
@@ -143,7 +144,7 @@ const Home = () => {
 }
 
 
-async function createRide(vehicleType) {
+async function createRide() {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_BASE_URL}/rides/create`,
@@ -243,11 +244,16 @@ async function createRide(vehicleType) {
 
 
       <div ref={vehiclePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
-        <VehiclePanel createRide={createRide} fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+        <VehiclePanel selectVehicle={setVehicleType} fare={fare} setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
       </div>
 
       <div ref={confirmRidePanelRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
         <ConfirmRide
+          createRide={createRide}
+          pickup={pickup}
+          destination={destination}
+          fare={fare}
+          vehicleType={vehicleType}
           setConfirmRidePanel={setConfirmRidePanel}
           setVehicleFound={setVehicleFound}
           setVehiclePanel={setVehiclePanel}
@@ -255,7 +261,11 @@ async function createRide(vehicleType) {
       </div>
 
       <div ref={vehicleFoundRef} className='w-full fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 pointer-events-auto'>
-        <LookingForDriver setVehicleFound={setVehicleFound} />
+        <LookingForDriver createRide={createRide}
+          pickup={pickup}
+          destination={destination}
+          fare={fare}
+          vehicleType={vehicleType} setVehicleFound={setVehicleFound} />
       </div>
 
       <div ref={waitingForDriverRef} className='w-full fixed z-20 bottom-0 bg-white px-3 py-10 pt-12 pointer-events-auto'>

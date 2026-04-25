@@ -7,7 +7,7 @@ const VehiclePanel = (props) => {
       <h3 className='text-2xl font-semibold mb-5'>Choose Vehicle</h3>
 
       <div onClick={() => { props.setConfirmRidePanel(true)
-        props.createRide('car')
+        props.selectVehicle('car')
        }} className='w-full mb-2 flex border-2 active:border-black rounded-xl items-center justify-between p-3 bg-gray-100'>
         <img className='h-12' src="https://cn-geo1.uber.com/image-proc/crop/resizecrop/udam/format=auto/width=552/height=368/srcb64=aHR0cHM6Ly90Yi1zdGF0aWMudWJlci5jb20vcHJvZC91ZGFtLWFzc2V0cy85OWJmYWM5Mi00ODAzLTQxNGMtODRmYi1kMWZmNjU0NWM5YzAucG5n" alt="" />
         <div className=' w-1/2 ml-5'>
@@ -18,7 +18,7 @@ const VehiclePanel = (props) => {
         <h2 className='text-xl font-semibold'>₹{props.fare.car}</h2>
       </div>
       <div onClick={() => { props.setConfirmRidePanel(true) 
-         props.createRide('bike')
+         props.selectVehicle('bike')
       }} className='w-full mb-2 flex border-2  rounded-xl active:border-black items-center justify-between p-3 bg-gray-100'>
         <img className='h-12' src="https://rajaneditz.com/wp-content/uploads/2022/05/Yellow-bullet-bike-png.webp" alt="" />
         <div className=' w-1/2 ml-5'>
@@ -29,7 +29,7 @@ const VehiclePanel = (props) => {
         <h2 className='text-xl font-semibold'>₹{props.fare.bike}</h2>
       </div>
       <div onClick={() => { props.setConfirmRidePanel(true) 
-         props.createRide('auto')
+         props.selectVehicle('auto')
       }} className='w-full mb-2 flex border-2 rounded-xl active:border-black  items-center justify-between p-3 bg-gray-100'>
         <img className='h-12' src="https://png.pngtree.com/png-clipart/20230414/original/pngtree-blue-rickshaw-png-image_9056195.png" alt="" />
         <div className=' w-1/2 ml-5'>
