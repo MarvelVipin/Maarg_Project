@@ -36,7 +36,7 @@ const submitHandler = async (e) => {
       
       localStorage.setItem('captainToken', data.token)
 
-      console.log("TOKEN SAVED:", localStorage.getItem('token'))
+      console.log("TOKEN SAVED:", localStorage.getItem('captainToken'))
 
       navigate('/captain-home')
     }
