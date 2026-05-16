@@ -10,8 +10,10 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
 
     const newSocket = io(import.meta.env.VITE_BASE_URL, {
+      transports: ['websocket'], 
+      withCredentials: true,    
       auth: {
-        token: localStorage.getItem("captainToken"),
+        token: localStorage.getItem("captainToken") || localStorage.getItem("userToken"), 
       },
     });
 
