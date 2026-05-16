@@ -7,10 +7,12 @@ let io;
 function initiateSocket(server) {
     io = socketIo(server, {
         cors: {
-            origin: "https://gilded-mochi-8570d8.netlify.app", // Allow only your frontend
+            origin: "https://gilded-mochi-8570d8.netlify.app",
             methods: ["GET", "POST"],
-            credentials: true // Crucial for parsing cross-origin socket traffic
-        }
+            credentials: true
+        },
+        transports: ['polling', 'websocket'], 
+        allowEIO3: true 
     });
 
     io.on("connection", (socket) => {
