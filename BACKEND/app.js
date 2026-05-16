@@ -15,7 +15,11 @@ ConnectToDb();
 
 
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://gilded-mochi-8570d8.netlify.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true 
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
